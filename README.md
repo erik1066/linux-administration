@@ -86,10 +86,40 @@ Output:
 
 ## tr command
 
-`tr` is short for translate. Let's say we have a space-delimited file that we want to turn into a comma-separated values file:
+`tr` is short for translate. Let's say we have a space-delimited file that we want to turn into a comma-separated values file. Here's how we might create such a space-delimited file:
 
 ```bash
-tr ' ' ',' < file.txt > file.csv
+echo "David 23 Atlanta" >> people.txt
+echo "Maria 37 Chicago" >> people.txt
 ```
 
-The above command takes `file.txt`, replaces the spaces with commas, and outputs the translated content to `file.csv`.
+Here's one way we could convert that to a CSV file:
+
+```bash
+tr ' ' ',' < people.txt > people.csv
+cat people.csv
+```
+
+The above command takes `people.txt`, replaces the spaces with commas, and outputs the translated content to `people.csv`.
+
+Let's loop over the contents of this CSV file. Note that the Internal Field Separator (IFS) for the shell session is a space; but since we have a CSV file now, we want to separate fields with a comma. Here's how we might do that:
+
+```bash
+OLDIFS="$IFS"
+IFS=','
+while read name age city; do
+    echo $name
+    echo $age
+    echo $city
+done < people.csv
+IFS="$OLDIFS"
+```
+
+These lines in the script above ensure that we reset the IFS back to its previous value:
+
+```bash
+OLDIFS="$IFS"
+IFS=','
+...
+IFS="$OLDIFS"
+```
